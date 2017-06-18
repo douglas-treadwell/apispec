@@ -6,11 +6,14 @@ import re
 import json
 import tempfile
 import subprocess
+import inspect
 
 import yaml
+import collections
 
 from apispec.compat import iteritems
 from apispec import exceptions
+
 
 # from django.contrib.admindocs.utils
 def trim_docstring(docstring):
@@ -25,6 +28,7 @@ def trim_docstring(docstring):
     indent = min(len(line) - len(line.lstrip()) for line in lines if line.lstrip())
     trimmed = [lines[0].lstrip()] + [line[indent:].rstrip() for line in lines[1:]]
     return "\n".join(trimmed).strip()
+
 
 # from rest_framework.utils.formatting
 def dedent(content):
@@ -44,6 +48,7 @@ def dedent(content):
         content = re.sub(re.compile(whitespace_pattern, re.MULTILINE), '', content)
 
     return content.strip()
+
 
 def load_yaml_from_docstring(docstring):
     """Loads YAML from docstring."""
@@ -65,6 +70,7 @@ def load_yaml_from_docstring(docstring):
     except yaml.YAMLError:
         return None
 
+
 PATH_KEYS = set([
     'get',
     'put',
@@ -74,6 +80,7 @@ PATH_KEYS = set([
     'head',
     'patch',
 ])
+
 
 def load_operations_from_docstring(docstring):
     """Return a dictionary of Swagger operations parsed from a
@@ -85,6 +92,7 @@ def load_operations_from_docstring(docstring):
                         if key in PATH_KEYS or key.startswith('x-')}
     else:
         return None
+
 
 def validate_swagger(spec):
     """Validate the output of an :class:`APISpec` object.
@@ -102,3 +110,24 @@ def validate_swagger(spec):
             )
         except subprocess.CalledProcessError as error:
             raise exceptions.SwaggerError(error.output.decode('utf-8'))
+
+
+# from marshmallow.utils
+def is_generator(obj):
+    """Return True if ``obj`` is a generator
+    """
+    return inspect.isgeneratorfunction(obj) or inspect.isgenerator(obj)
+
+
+# from marshmallow.utils
+def is_iterable_but_not_string(obj):
+    """Return True if ``obj`` is an iterable object that isn't a string."""
+    return (
+        (isinstance(obj, collections.Iterable) and not hasattr(obj, "strip")) or is_generator(obj)
+    )
+
+
+# from marshmallow.utils
+def is_collection(obj):
+    """Return True if ``obj`` is a collection type, e.g list, tuple, queryset."""
+    return is_iterable_but_not_string(obj) and not isinstance(obj, collections.Mapping)

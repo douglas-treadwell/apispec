@@ -12,10 +12,10 @@ from collections import OrderedDict
 import copy
 
 import marshmallow
-from marshmallow.utils import is_collection
-from marshmallow.compat import text_type, binary_type, iteritems
-from marshmallow.orderedset import OrderedSet
 
+from apispec.utils import is_collection
+from apispec.compat import iteritems
+from apispec.ordered_set import OrderedSet
 from apispec.lazy_dict import LazyDict
 
 ##### marshmallow #####
