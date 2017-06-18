@@ -31,3 +31,4 @@ Contributors (chronological)
 - Daniel Radetsky `@dradetsky <https://github.com/dradetsky>`_
 - Lucas Coutinho `@lucasrc <https://github.com/lucasrc>`_
 - `@lamiskin <https://github.com/lamiskin>`_
+- Douglas Treadwell `@douglas-treadwell <https://github.com/douglas-treadwell>`_
